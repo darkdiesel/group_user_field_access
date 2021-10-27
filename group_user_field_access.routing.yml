@@ -4,6 +4,6 @@ group_user_field_access.user_field_access_settings:
     _form: '\Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom'
     _title: 'User field access'
   requirements:
-    _permission: 'User field access'
+    _permission: 'administer group'
   options:
     _admin_route: 'TRUE'

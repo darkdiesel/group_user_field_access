@@ -43,7 +43,11 @@ class UserFieldAccessController extends ControllerBase {
    *
    * @return bool
    */
-  public static function teamCoordinatorCanEditUser($teamCoordinator, $user) {
+  public static function teamCoordinatorCanEditUser($teamCoordinator = Null, $user) {
+    if (!isset($teamCoordinator)) {
+      $teamCoordinator = \Drupal::currentUser();
+    }
+
     $grp_membership_service = \Drupal::service('group.membership_loader');
     $grps = $grp_membership_service->loadByUser($teamCoordinator);
 

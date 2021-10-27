@@ -16,7 +16,6 @@ use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
  * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultNeutral
  */
 function group_user_field_access_user_access(EntityInterface $entity, $operation, AccountInterface $account) {
-
   $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($account, $entity);
 
   if ($allow_to_edit_user) {
@@ -35,6 +34,22 @@ function group_user_field_access_user_access(EntityInterface $entity, $operation
  *
  */
 function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $user = \Drupal::currentUser();
+
+  if ($user->hasPermission('administer')) {
+    return;
+  };
+
+  // get edited user from route
+  $route = \Drupal::routeMatch();
+  $edit_user = $route->getParameter('user');
+
+  $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($user, $edit_user);
+
+  if (!$allow_to_edit_user) {
+    return;
+  }
+
   // hide/remove account fields that user don't able to see
   foreach (UserFieldAccessController::hidden_account_fields as $field) {
     if (isset($form['account'][$field])) {
@@ -76,4 +91,6 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
       unset($form[$custom_account_field]);
     }
   }
+
+
 }
