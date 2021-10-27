@@ -4,6 +4,7 @@
 namespace Drupal\group_user_field_access\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
 
 /**
  * Provides group membership route controllers.
@@ -33,6 +34,63 @@ class UserFieldAccessController extends ControllerBase {
   const read_only_fields = [
 
   ];
+
+  /**
+   * Check if team coordinator can edit user (that user is)
+   *
+   * @param $teamCoordinator
+   * @param $user
+   *
+   * @return bool
+   */
+  public static function teamCoordinatorCanEditUser($teamCoordinator, $user) {
+    $grp_membership_service = \Drupal::service('group.membership_loader');
+    $grps = $grp_membership_service->loadByUser($teamCoordinator);
+
+    $allow_to_edit_user = FALSE;
+
+    if ($grps) {
+      // get module settings for field access
+      $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
+      $team_coordinator_group_roles = $field_access_settings->get('team_coordinator_group_roles');
+
+      foreach ($grps as $grp) {
+        $groups[] = $grp->getGroup();
+
+        $group = $grp->getGroup();
+
+        $group_type = $group->getGroupType()->id();
+
+        $team_coordinator_group = FALSE;
+
+        if (isset($team_coordinator_group_roles[$group_type]) && $team_coordinator_group_roles[$group_type]) {
+          $group_team_coordinator_role = $team_coordinator_group_roles[$group_type];
+
+          // get group member and they roles
+          $group_member = $group->getMember($teamCoordinator);
+          $group_member_roles = $group_member->getRoles();
+
+          // check if team coordinator assigned to team coordinator role
+          if (in_array($group_team_coordinator_role,
+            array_keys($group_member_roles))) {
+            $team_coordinator_group = TRUE;
+          }
+        }
+
+        // if user is team coordinator in this group
+        if ($team_coordinator_group) {
+          // check if requested user is member of team coordinator group
+          if ($group->getMember($user)) {
+            $allow_to_edit_user = TRUE;
+
+            break;
+          }
+        }
+      }
+    }
+
+    return $allow_to_edit_user;
+  }
 
   /**
    * Return array of user account fields

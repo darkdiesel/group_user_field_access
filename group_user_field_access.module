@@ -15,21 +15,15 @@ use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
  *
  * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultNeutral
  */
-function group_user_field_access_user_access(
-  EntityInterface $entity,
-  $operation,
-  AccountInterface $account
-) {
-  // get module settings for field access
-  $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
+function group_user_field_access_user_access(EntityInterface $entity, $operation, AccountInterface $account) {
 
-  // check if current user is team coordinator
-  if ($entity->isNew()) {
+  $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($account, $entity);
+
+  if ($allow_to_edit_user) {
+    return AccessResult::allowed();
+  } else {
     return AccessResult::neutral();
   }
-
-  // check if requested user is member of team coordinator group
-  return AccessResult::allowed();
 }
 
 /**
@@ -40,7 +34,7 @@ function group_user_field_access_user_access(
  * @param $form_id
  *
  */
-function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state,  $form_id) {
+function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // hide/remove account fields that user don't able to see
   foreach (UserFieldAccessController::hidden_account_fields as $field) {
     if (isset($form['account'][$field])) {
