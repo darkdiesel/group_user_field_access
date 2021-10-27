@@ -5,6 +5,7 @@ namespace Drupal\group_user_field_access\Form;
 use Drupal\Component\Utility\Environment;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group_user_field_access\Controller\UserFieldAccessController;
 
 /**
  * Configure api settings for sending request to laravel.
@@ -44,24 +45,13 @@ class UserFieldAccessSettingsFrom extends ConfigFormBase
     $settings = $this->config(static::SETTINGS_KEY);
 
     // Get list of user fields from /admin/config/people/accounts/fields page
-    $fields = array_filter(
-      \Drupal::service('entity_field.manager')->getFieldDefinitions('user', 'user'),
-      function ($fieldDefinition) {
-        return $fieldDefinition instanceof \Drupal\field\FieldConfigInterface;
-      }
-    );
-
-    $_fields_options = [];
-
-    foreach ($fields as $field_name => $field_class) {
-      $_fields_options[$field_name] = $field_name;
-    }
+    $custom_account_fields = UserFieldAccessController::getUserAccountFileds();
 
     $form['editable_user_fields'] = [
       '#type' => 'checkboxes',
       '#title' => t("Editable user fields"),
       //'#description' => t(''),
-      '#options' => $_fields_options,
+      '#options' => $custom_account_fields,
       '#required' => FALSE,
       '#default_value' => $settings->get('editable_user_fields') ?? [],
     ];
@@ -108,7 +98,7 @@ class UserFieldAccessSettingsFrom extends ConfigFormBase
 
   public function validateForm(array &$form, FormStateInterface $form_state)
   {
-
+    parent::validateForm($form, $form_state);
   }
 
   /**
@@ -136,6 +126,6 @@ class UserFieldAccessSettingsFrom extends ConfigFormBase
   }
 
   public static function getSettings(){
-
+    return \Drupal::config(self::SETTINGS_KEY);
   }
 }

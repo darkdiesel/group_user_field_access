@@ -1,0 +1,85 @@
+<?php
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\group_user_field_access\Controller\UserFieldAccessController;
+use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
+
+/**
+ * Implements hook_entity_access().
+ *
+ * @param  \Drupal\Core\Entity\EntityInterface  $entity
+ * @param $operation
+ * @param  \Drupal\Core\Session\AccountInterface  $account
+ *
+ * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultNeutral
+ */
+function group_user_field_access_user_access(
+  EntityInterface $entity,
+  $operation,
+  AccountInterface $account
+) {
+  // get module settings for field access
+  $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
+
+  // check if current user is team coordinator
+  if ($entity->isNew()) {
+    return AccessResult::neutral();
+  }
+
+  // check if requested user is member of team coordinator group
+  return AccessResult::allowed();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @param $form
+ * @param  \Drupal\Core\Form\FormStateInterface  $form_state
+ * @param $form_id
+ *
+ */
+function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state,  $form_id) {
+  // hide/remove account fields that user don't able to see
+  foreach (UserFieldAccessController::hidden_account_fields as $field) {
+    if (isset($form['account'][$field])) {
+      unset($form['account'][$field]);
+    }
+  }
+
+  // hide other fields that user don't able to see
+  foreach (UserFieldAccessController::hidden_fields as $field) {
+    if (isset($form[$field])) {
+      unset($form[$field]);
+    }
+  }
+
+  foreach (UserFieldAccessController::read_only_account_fields as $field) {
+    if (isset($form['account'][$field])) {
+      $form['account'][$field]['#attributes'] = [
+        'disabled' => 'disabled',
+        'readonly' => 'readonly',
+      ];
+    }
+  }
+
+  // get module settings for field access
+  $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
+
+  $editable_fields = $field_access_settings->get('editable_user_fields');
+
+  if (!$editable_fields) {
+    $editable_fields = [];
+  }
+
+  // Get list of user fields from /admin/config/people/accounts/fields page
+  $custom_account_fields = UserFieldAccessController::getUserAccountFileds();
+
+  // hide custom field if it not exist in saved settings
+  foreach ($custom_account_fields as $custom_account_field) {
+    if (!isset($editable_fields[$custom_account_field]) || (isset($editable_fields[$custom_account_field]) && $editable_fields[$custom_account_field] === 0)) {
+      unset($form[$custom_account_field]);
+    }
+  }
+}
