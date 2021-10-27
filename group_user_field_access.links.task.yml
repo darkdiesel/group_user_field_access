@@ -1,0 +1,5 @@
+group_user_field_access.user_field_access_settings:
+  title: 'User field access'
+  base_route: 'entity.group.collection'
+  route_name: 'group_user_field_access.user_field_access_settings'
+  weight: 15

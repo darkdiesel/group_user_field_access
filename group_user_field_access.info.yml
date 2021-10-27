@@ -1,0 +1,9 @@
+name: 'Group user field access'
+description: 'Extension for group module'
+package: 'Group'
+type: 'module'
+core_version_requirement: ^8.8 || ^9
+configure: 'group.settings'
+dependencies:
+  - 'group'
+
