@@ -9,9 +9,9 @@ use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
 /**
  * Implements hook_entity_access().
  *
- * @param  \Drupal\Core\Entity\EntityInterface  $entity
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  * @param $operation
- * @param  \Drupal\Core\Session\AccountInterface  $account
+ * @param \Drupal\Core\Session\AccountInterface $account
  *
  * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultNeutral
  */
@@ -20,7 +20,8 @@ function group_user_field_access_user_access(EntityInterface $entity, $operation
 
   if ($allow_to_edit_user) {
     return AccessResult::allowed();
-  } else {
+  }
+  else {
     return AccessResult::neutral();
   }
 }
@@ -29,7 +30,7 @@ function group_user_field_access_user_access(EntityInterface $entity, $operation
  * Implements hook_form_FORM_ID_alter().
  *
  * @param $form
- * @param  \Drupal\Core\Form\FormStateInterface  $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  * @param $form_id
  *
  */

@@ -12,8 +12,8 @@ use Drupal\group_user_field_access\Controller\UserFieldAccessController;
  *
  * @package Drupal\group_user_field_access\Form
  */
-class UserFieldAccessSettingsFrom extends ConfigFormBase
-{
+class UserFieldAccessSettingsFrom extends ConfigFormBase {
+
   /**
    * Config settings name.
    *
@@ -24,16 +24,14 @@ class UserFieldAccessSettingsFrom extends ConfigFormBase
   /**
    * {@inheritdoc}
    */
-  public function getFormId()
-  {
+  public function getFormId() {
     return 'group_user_field_access_settings';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames()
-  {
+  protected function getEditableConfigNames() {
     return [
       static::SETTINGS_KEY,
     ];
@@ -83,7 +81,7 @@ class UserFieldAccessSettingsFrom extends ConfigFormBase
         $_group_roles[$group_role->id()] = $group_role->label();
       }
 
-      $form['team_coordinator_group_types']['team_coordinator_role_group_'.$group_type->id()] = [
+      $form['team_coordinator_group_types']['team_coordinator_role_group_' . $group_type->id()] = [
         '#type' => 'select',
         '#title' => t("@group", ['@group' => $group_type->label()]),
         '#description' => t('Select team coordinator role for @group group type', ['@group' => $group_type->label()]),
@@ -98,25 +96,23 @@ class UserFieldAccessSettingsFrom extends ConfigFormBase
     return parent::buildForm($form, $form_state);
   }
 
-  public function validateForm(array &$form, FormStateInterface $form_state)
-  {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state)
-  {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $team_coordinator_group_roles = [];
 
     $group_types = \Drupal::entityTypeManager()
       ->getStorage('group_type')->loadMultiple();
 
     foreach ($group_types as $group_type) {
-      $form_state->getValue('team_coordinator_role_group_'.$group_type->id());
+      $form_state->getValue('team_coordinator_role_group_' . $group_type->id());
 
-      $team_coordinator_group_roles[$group_type->id()] = $form_state->getValue('team_coordinator_role_group_'.$group_type->id());
+      $team_coordinator_group_roles[$group_type->id()] = $form_state->getValue('team_coordinator_role_group_' . $group_type->id());
     }
 
     $this->configFactory->getEditable(static::SETTINGS_KEY)
@@ -127,7 +123,8 @@ class UserFieldAccessSettingsFrom extends ConfigFormBase
     parent::submitForm($form, $form_state);
   }
 
-  public static function getSettings(){
+  public static function getSettings() {
     return \Drupal::config(self::SETTINGS_KEY);
   }
+
 }

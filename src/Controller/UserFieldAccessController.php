@@ -43,7 +43,7 @@ class UserFieldAccessController extends ControllerBase {
    *
    * @return bool
    */
-  public static function teamCoordinatorCanEditUser($teamCoordinator = Null, $user) {
+  public static function teamCoordinatorCanEditUser($teamCoordinator = NULL, $user) {
     if (!isset($teamCoordinator)) {
       $teamCoordinator = \Drupal::currentUser();
     }
