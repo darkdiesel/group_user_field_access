@@ -41,7 +41,7 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
     return;
   };
 
-  // get edited user from route
+  // get user param from route
   $route = \Drupal::routeMatch();
   $edit_user = $route->getParameter('user');
 

@@ -7,10 +7,11 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
 
 /**
- * Provides group membership route controllers.
+ * Helper controller
  *
- * This only controls the routes that are not supported out of the box by the
- * plugin base \Drupal\group\Plugin\GroupContentEnablerBase.
+ * Class UserFieldAccessController
+ *
+ * @package Drupal\group_user_field_access\Controller
  */
 class UserFieldAccessController extends ControllerBase {
 

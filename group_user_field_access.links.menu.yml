@@ -1,5 +1,0 @@
-totta_webform_import.webform_import_20_page:
-  title: 'Questionnaires v2.0 Import'
-  description: 'Provide functionality to import webforms and submissions from 2.0 version'
-  route_name: group_user_field_access.user_field_access_settings
-  parent: system.admin_config_development
