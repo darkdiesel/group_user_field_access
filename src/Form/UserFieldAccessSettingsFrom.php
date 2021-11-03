@@ -8,12 +8,14 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\group_user_field_access\Controller\UserFieldAccessController;
 
 /**
- * Configure api settings for sending request to laravel.
+ * Class UserFieldAccessSettingsFrom settings form
+ *
+ * @package Drupal\group_user_field_access\Form
  */
 class UserFieldAccessSettingsFrom extends ConfigFormBase
 {
   /**
-   * Config react settings.
+   * Config settings name.
    *
    * @var string
    */
