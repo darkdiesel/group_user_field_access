@@ -17,6 +17,7 @@ class UserFieldAccessController extends ControllerBase {
 
   // field names that will be hidden om user edit form
   const hidden_account_fields = [
+    'name',
     'pass',
     'notify',
     'roles',
@@ -26,6 +27,7 @@ class UserFieldAccessController extends ControllerBase {
   const hidden_fields = [
     'contact',
     'timezone',
+    'language',
   ];
 
   const read_only_account_fields = [

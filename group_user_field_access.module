@@ -54,20 +54,29 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
   // hide/remove account fields that user don't able to see
   foreach (UserFieldAccessController::hidden_account_fields as $field) {
     if (isset($form['account'][$field])) {
-      unset($form['account'][$field]);
+      $form['account'][$field]['#access'] = FALSE;
     }
   }
 
   // hide other fields that user don't able to see
   foreach (UserFieldAccessController::hidden_fields as $field) {
     if (isset($form[$field])) {
-      unset($form[$field]);
+      $form[$field]['#access'] = FALSE;
     }
   }
 
   foreach (UserFieldAccessController::read_only_account_fields as $field) {
     if (isset($form['account'][$field])) {
       $form['account'][$field]['#attributes'] = [
+        'disabled' => 'disabled',
+        'readonly' => 'readonly',
+      ];
+    }
+  }
+
+  foreach (UserFieldAccessController::read_only_fields as $field) {
+    if (isset($form[$field])) {
+      $form['account']['#attributes'] = [
         'disabled' => 'disabled',
         'readonly' => 'readonly',
       ];
@@ -87,11 +96,32 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
   $custom_account_fields = UserFieldAccessController::getUserAccountFileds();
 
   // hide custom field if it not exist in saved settings
-  foreach ($custom_account_fields as $custom_account_field) {
+  foreach ($custom_account_fields as $custom_account_field => $custom_account_field_label) {
     if (!isset($editable_fields[$custom_account_field]) || (isset($editable_fields[$custom_account_field]) && $editable_fields[$custom_account_field] === 0)) {
-      unset($form[$custom_account_field]);
+      $form[$custom_account_field]['#access'] = FALSE;
     }
   }
 
+  // list of elements that not need to process
+  $form_exclude_elements = [
+    'account',
+    'form_build_id',
+    'form_token',
+    'footer',
+    'actions',
+  ];
 
+  // hide other fields that not in lists
+  foreach ($form as $name => $el) {
+    // check if $name not from setting
+    if (strpos($name, '#') === FALSE) {
+      if (in_array($name, $form_exclude_elements)) {
+        continue;
+      }
+
+      if (!in_array($name, array_keys($custom_account_fields)) && !in_array($name, UserFieldAccessController::read_only_fields)) {
+        $form[$name]['#access'] = FALSE;
+      }
+    }
+  }
 }
