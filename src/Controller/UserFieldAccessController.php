@@ -114,7 +114,7 @@ class UserFieldAccessController extends ControllerBase {
     $_fields_options = [];
 
     foreach ($fields as $field_name => $field_class) {
-      $_fields_options[$field_name] = $field_name;
+      $_fields_options[$field_name] = $field_class->label();
     }
 
     return $_fields_options;
