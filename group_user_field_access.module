@@ -41,7 +41,7 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
     return;
   };
 
-  // get user param from route
+  // Get user param from route.
   $route = \Drupal::routeMatch();
   $edit_user = $route->getParameter('user');
 
@@ -51,14 +51,14 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
     return;
   }
 
-  // hide/remove account fields that user don't able to see
+  // Hide/remove account fields that user don't able to see.
   foreach (UserFieldAccessController::HIDDEN_ACCOUNT_FIELDS as $field) {
     if (isset($form['account'][$field])) {
       $form['account'][$field]['#access'] = FALSE;
     }
   }
 
-  // hide other fields that user don't able to see
+  // Hide other fields that user don't able to see.
   foreach (UserFieldAccessController::HIDDEN_FIELDS as $field) {
     if (isset($form[$field])) {
       $form[$field]['#access'] = FALSE;
@@ -83,7 +83,7 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
     }
   }
 
-  // get module settings for field access
+  // Get module settings for field access.
   $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
 
   $editable_fields = $field_access_settings->get('editable_user_fields');
@@ -92,17 +92,17 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
     $editable_fields = [];
   }
 
-  // Get list of user fields from /admin/config/people/accounts/fields page
-  $custom_account_fields = UserFieldAccessController::getUserAccountFileds();
+  // Get list of user fields from /admin/config/people/accounts/fields page.
+  $custom_account_fields = UserFieldAccessController::getUserAccountFields();
 
-  // hide custom field if it not exist in saved settings
+  // Hide custom field if it not exist in saved settings.
   foreach ($custom_account_fields as $custom_account_field => $custom_account_field_label) {
     if (!isset($editable_fields[$custom_account_field]) || (isset($editable_fields[$custom_account_field]) && $editable_fields[$custom_account_field] === 0)) {
       $form[$custom_account_field]['#access'] = FALSE;
     }
   }
 
-  // list of elements that not need to process
+  // List of elements that not need to process.
   $form_exclude_elements = [
     'account',
     'form_build_id',
@@ -111,15 +111,15 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
     'actions',
   ];
 
-  // hide other fields that not in lists
+  // Hide other fields that not in lists.
   foreach ($form as $name => $el) {
-    // check if $name not from setting
+    // Check if $name not from setting.
     if (strpos($name, '#') === FALSE) {
       if (in_array($name, $form_exclude_elements)) {
         continue;
       }
 
-      if (!in_array($name, array_keys($custom_account_fields)) && !in_array($name, UserFieldAccessController::read_only_fields)) {
+      if (!in_array($name, array_keys($custom_account_fields)) && !in_array($name, UserFieldAccessController::READ_ONLY_FIELDS)) {
         $form[$name]['#access'] = FALSE;
       }
     }
