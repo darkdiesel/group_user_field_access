@@ -52,20 +52,20 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
   }
 
   // hide/remove account fields that user don't able to see
-  foreach (UserFieldAccessController::hidden_account_fields as $field) {
+  foreach (UserFieldAccessController::HIDDEN_ACCOUNT_FIELDS as $field) {
     if (isset($form['account'][$field])) {
       $form['account'][$field]['#access'] = FALSE;
     }
   }
 
   // hide other fields that user don't able to see
-  foreach (UserFieldAccessController::hidden_fields as $field) {
+  foreach (UserFieldAccessController::HIDDEN_FIELDS as $field) {
     if (isset($form[$field])) {
       $form[$field]['#access'] = FALSE;
     }
   }
 
-  foreach (UserFieldAccessController::read_only_account_fields as $field) {
+  foreach (UserFieldAccessController::READ_ONLY_ACCOUNT_FIELDS as $field) {
     if (isset($form['account'][$field])) {
       $form['account'][$field]['#attributes'] = [
         'disabled' => 'disabled',
@@ -74,7 +74,7 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
     }
   }
 
-  foreach (UserFieldAccessController::read_only_fields as $field) {
+  foreach (UserFieldAccessController::READ_ONLY_FIELDS as $field) {
     if (isset($form[$field])) {
       $form['account']['#attributes'] = [
         'disabled' => 'disabled',
