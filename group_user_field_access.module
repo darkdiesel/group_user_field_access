@@ -67,6 +67,8 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
 
   foreach (UserFieldAccessController::READ_ONLY_ACCOUNT_FIELDS as $field) {
     if (isset($form['account'][$field])) {
+      $form['account'][$field]['#access'] = TRUE;
+
       $form['account'][$field]['#attributes'] = [
         'disabled' => 'disabled',
         'readonly' => 'readonly',
