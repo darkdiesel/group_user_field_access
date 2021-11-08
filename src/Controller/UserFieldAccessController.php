@@ -1,1 +1,126 @@
-<?phpnamespace Drupal\group_user_field_access\Controller;use Drupal\Core\Controller\ControllerBase;use Drupal\field\FieldConfigInterface;use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;/** * Helper controller. * * Class UserFieldAccessController. * * @package Drupal\group_user_field_access\Controller */class UserFieldAccessController extends ControllerBase {  // Field names that will be hidden om user edit form.  const HIDDEN_ACCOUNT_FIELDS = [    'name',    'pass',    'notify',    'roles',    'status',  ];  const HIDDEN_FIELDS = [    'contact',    'timezone',    'language',  ];  const READ_ONLY_ACCOUNT_FIELDS = [    'mail',  ];  const READ_ONLY_FIELDS = [];  /**   * Check if team coordinator can edit user (that user is)   *   * @param null $teamCoordinator   * @param $user   *   * @return bool   */  public static function teamCoordinatorCanEditUser($teamCoordinator = NULL, $user) {    if (!isset($teamCoordinator)) {      $teamCoordinator = \Drupal::currentUser();    }    $group_membership_service = \Drupal::service('group.membership_loader');    $groups = $group_membership_service->loadByUser($teamCoordinator);    $allow_to_edit_user = FALSE;    if ($groups) {      // Get module settings for field access.      $field_access_settings = UserFieldAccessSettingsFrom::getSettings();      $team_coordinator_group_roles = $field_access_settings->get('team_coordinator_group_roles');      foreach ($groups as $grp) {        $groups[] = $grp->getGroup();        $group = $grp->getGroup();        $group_type = $group->getGroupType()->id();        $team_coordinator_group = FALSE;        if (isset($team_coordinator_group_roles[$group_type]) && $team_coordinator_group_roles[$group_type]) {          $group_team_coordinator_role = $team_coordinator_group_roles[$group_type];          // Get group member and they roles.          $group_member = $group->getMember($teamCoordinator);          $group_member_roles = $group_member->getRoles();          // Check if team coordinator assigned to team coordinator role.          if (in_array($group_team_coordinator_role,            array_keys($group_member_roles))) {            $team_coordinator_group = TRUE;          }        }        // If user is team coordinator in this group.        if ($team_coordinator_group) {          // Check if requested user is member of team coordinator group.          if ($group->getMember($user)) {            $allow_to_edit_user = TRUE;            break;          }        }      }    }    return $allow_to_edit_user;  }  /**   * Return array of user account fields.   *   * @return array   */  public static function getUserAccountFields() {    $fields = array_filter(      \Drupal::service('entity_field.manager')        ->getFieldDefinitions('user', 'user'),      function ($fieldDefinition) {        return $fieldDefinition instanceof FieldConfigInterface;      }    );    $_fields_options = [];    foreach ($fields as $field_name => $field_class) {      $_fields_options[$field_name] = $field_class->label();    }    return $_fields_options;  }}
+<?php
+
+namespace Drupal\group_user_field_access\Controller;
+
+use Drupal;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\field\FieldConfigInterface;
+use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
+
+/**
+ * Helper controller.
+ *
+ * Class UserFieldAccessController.
+ *
+ * @package Drupal\group_user_field_access\Controller
+ */
+class UserFieldAccessController extends ControllerBase {
+
+  // Field names that will be hidden om user edit form.
+  const HIDDEN_ACCOUNT_FIELDS = [
+    'pass',
+    'notify',
+    'status',
+  ];
+
+  const HIDDEN_FIELDS = [
+    'contact',
+  ];
+
+  const READ_ONLY_ACCOUNT_FIELDS = [
+    'name',
+    'roles',
+  ];
+
+  const READ_ONLY_FIELDS = [];
+
+  const CAN_EDIT_FIELDS = [
+    'language',
+    'timezone'
+  ];
+
+  /**
+   * Check if team coordinator can edit user (that user is)
+   *
+   * @param null $teamCoordinator
+   * @param $user
+   *
+   * @return bool
+   */
+  public static function teamCoordinatorCanEditUser($teamCoordinator = NULL, $user) {
+    if (!isset($teamCoordinator)) {
+      $teamCoordinator = Drupal::currentUser();
+    }
+
+    $group_membership_service = Drupal::service('group.membership_loader');
+    $groups = $group_membership_service->loadByUser($teamCoordinator);
+
+    $allow_to_edit_user = FALSE;
+
+    if ($groups) {
+      // Get module settings for field access.
+      $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
+      $team_coordinator_group_roles = $field_access_settings->get('team_coordinator_group_roles');
+
+      foreach ($groups as $grp) {
+        $groups[] = $grp->getGroup();
+
+        $group = $grp->getGroup();
+
+        $group_type = $group->getGroupType()->id();
+
+        $team_coordinator_group = FALSE;
+
+        if (isset($team_coordinator_group_roles[$group_type]) && $team_coordinator_group_roles[$group_type]) {
+          $group_team_coordinator_role = $team_coordinator_group_roles[$group_type];
+
+          // Get group member and they roles.
+          $group_member = $group->getMember($teamCoordinator);
+          $group_member_roles = $group_member->getRoles();
+
+          // Check if team coordinator assigned to team coordinator role.
+          if (in_array($group_team_coordinator_role,
+            array_keys($group_member_roles))) {
+            $team_coordinator_group = TRUE;
+          }
+        }
+
+        // If user is team coordinator in this group.
+        if ($team_coordinator_group) {
+          // Check if requested user is member of team coordinator group.
+          if ($group->getMember($user)) {
+            $allow_to_edit_user = TRUE;
+
+            break;
+          }
+        }
+      }
+    }
+
+    return $allow_to_edit_user;
+  }
+
+  /**
+   * Return array of user account fields.
+   *
+   * @return array
+   */
+  public static function getUserAccountFields() {
+    $fields = array_filter(
+      Drupal::service('entity_field.manager')
+        ->getFieldDefinitions('user', 'user'),
+      function ($fieldDefinition) {
+        return $fieldDefinition instanceof FieldConfigInterface;
+      }
+    );
+
+    $_fields_options = [];
+
+    foreach ($fields as $field_name => $field_class) {
+      $_fields_options[$field_name] = $field_class->label();
+    }
+
+    return $_fields_options;
+  }
+
+}

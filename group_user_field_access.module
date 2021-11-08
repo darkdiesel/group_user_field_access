@@ -5,15 +5,10 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group_user_field_access\Controller\UserFieldAccessController;
 use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_entity_access().
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
- * @param $operation
- * @param \Drupal\Core\Session\AccountInterface $account
- *
- * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultNeutral
  */
 function group_user_field_access_user_access(EntityInterface $entity, $operation, AccountInterface $account) {
   $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($account, $entity);
@@ -28,22 +23,16 @@ function group_user_field_access_user_access(EntityInterface $entity, $operation
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
- *
  */
-function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  $user = \Drupal::currentUser();
+function group_user_field_access_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $user = Drupal::currentUser();
 
   if ($user->hasPermission('administer')) {
     return;
-  };
+  }
 
   // Get user param from route.
-  $route = \Drupal::routeMatch();
-  $edit_user = $route->getParameter('user');
+  $edit_user = Drupal::routeMatch()->getParameter('user');
 
   $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($user, $edit_user);
 
@@ -121,7 +110,7 @@ function group_user_field_access_form_user_form_alter(&$form, \Drupal\Core\Form\
         continue;
       }
 
-      if (!in_array($name, array_keys($custom_account_fields)) && !in_array($name, UserFieldAccessController::READ_ONLY_FIELDS)) {
+      if (!in_array($name, array_keys($custom_account_fields)) && !in_array($name, UserFieldAccessController::READ_ONLY_FIELDS) && !in_array($name, UserFieldAccessController::CAN_EDIT_FIELDS)) {
         $form[$name]['#access'] = FALSE;
       }
     }
