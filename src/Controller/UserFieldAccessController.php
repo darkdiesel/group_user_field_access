@@ -16,28 +16,31 @@ use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
  */
 class UserFieldAccessController extends ControllerBase {
 
-  // Field names that will be hidden om user edit form.
+  // Field names for account that will be hidden om user edit form.
   const HIDDEN_ACCOUNT_FIELDS = [
     'pass',
     'notify',
     'status',
   ];
 
+  // Field names that should be hidden.
   const HIDDEN_FIELDS = [
     'contact',
+    'language',
+    'timezone',
   ];
 
+  // Field names from account that should displayed like disabled.
   const READ_ONLY_ACCOUNT_FIELDS = [
     'name',
     'roles',
   ];
 
+  // Field names that should be displayed like disabled.
   const READ_ONLY_FIELDS = [];
 
-  const CAN_EDIT_FIELDS = [
-    'language',
-    'timezone',
-  ];
+  // Field names that user can edit.
+  const CAN_EDIT_FIELDS = [];
 
   /**
    * Check if team coordinator can edit user (that user is)
