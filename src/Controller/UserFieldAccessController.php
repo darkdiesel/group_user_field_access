@@ -2,8 +2,8 @@
 
 namespace Drupal\group_user_field_access\Controller;
 
-use Drupal;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\field\FieldConfigInterface;
 use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
 
@@ -36,23 +36,26 @@ class UserFieldAccessController extends ControllerBase {
 
   const CAN_EDIT_FIELDS = [
     'language',
-    'timezone'
+    'timezone',
   ];
 
   /**
    * Check if team coordinator can edit user (that user is)
    *
-   * @param null $teamCoordinator
-   * @param $user
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *   Editable user.
+   * @param \Drupal\Core\Session\AccountInterface $teamCoordinator
+   *   Team coordinator user.
    *
    * @return bool
+   *   teamCoordinator can edit user.
    */
-  public static function teamCoordinatorCanEditUser($teamCoordinator = NULL, $user) {
+  public static function teamCoordinatorCanEditUser(AccountInterface $user, AccountInterface $teamCoordinator) {
     if (!isset($teamCoordinator)) {
-      $teamCoordinator = Drupal::currentUser();
+      $teamCoordinator = \Drupal::currentUser();
     }
 
-    $group_membership_service = Drupal::service('group.membership_loader');
+    $group_membership_service = \Drupal::service('group.membership_loader');
     $groups = $group_membership_service->loadByUser($teamCoordinator);
 
     $allow_to_edit_user = FALSE;
@@ -104,10 +107,11 @@ class UserFieldAccessController extends ControllerBase {
    * Return array of user account fields.
    *
    * @return array
+   *   array with fields.
    */
   public static function getUserAccountFields() {
     $fields = array_filter(
-      Drupal::service('entity_field.manager')
+      \Drupal::service('entity_field.manager')
         ->getFieldDefinitions('user', 'user'),
       function ($fieldDefinition) {
         return $fieldDefinition instanceof FieldConfigInterface;

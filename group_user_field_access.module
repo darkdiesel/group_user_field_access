@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_entity_access().
  */
 function group_user_field_access_user_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($account, $entity);
+  $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($entity, $account);
 
   if ($allow_to_edit_user) {
     return AccessResult::allowed();
@@ -34,7 +34,7 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
   // Get user param from route.
   $edit_user = Drupal::routeMatch()->getParameter('user');
 
-  $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($user, $edit_user);
+  $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($edit_user, $user);
 
   if (!$allow_to_edit_user) {
     return;
