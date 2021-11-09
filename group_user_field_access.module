@@ -1,7 +1,6 @@
 <?php
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group_user_field_access\Controller\UserFieldAccessController;
 use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
@@ -10,15 +9,19 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_entity_access().
  */
-function group_user_field_access_user_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($entity, $account);
+function group_user_field_access_user_access(AccountInterface $entity, $operation, AccountInterface $account) {
+  switch ($operation) {
+    case "view":
+    case "update":
+      $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($entity, $account);
 
-  if ($allow_to_edit_user) {
-    return AccessResult::allowed();
+      if ($allow_to_edit_user) {
+        return AccessResult::allowed();
+      }
+      break;
   }
-  else {
-    return AccessResult::neutral();
-  }
+
+  return AccessResult::allowed();
 }
 
 /**
@@ -33,6 +36,10 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
 
   // Get user param from route.
   $edit_user = Drupal::routeMatch()->getParameter('user');
+
+  if ($user->id() == $edit_user->id()) {
+    return;
+  }
 
   $allow_to_edit_user = UserFieldAccessController::teamCoordinatorCanEditUser($edit_user, $user);
 
@@ -93,9 +100,13 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
     }
   }
 
+  // Hide cancel account button.
+  $form['actions']['delete']['#access'] = FALSE;
+
   // List of elements that not need to process.
   $form_exclude_elements = [
     'account',
+    'form_id',
     'form_build_id',
     'form_token',
     'footer',
