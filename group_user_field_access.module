@@ -48,7 +48,8 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
   }
   $edit_operation = FALSE;
 
-  if (isset($_REQUEST['op']) && $_REQUEST['op'] == 'Save') {
+  // Check that form submitted.
+  if (isset($_REQUEST['op']) && $_REQUEST['op'] == $form['actions']['submit']['#value']) {
     $edit_operation = TRUE;
   }
 
