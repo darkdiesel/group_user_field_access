@@ -46,6 +46,11 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
   if (!$allow_to_edit_user) {
     return;
   }
+  $edit_operation = FALSE;
+
+  if (isset($_REQUEST['op']) && $_REQUEST['op'] == 'Save') {
+    $edit_operation = TRUE;
+  }
 
   // Hide/remove account fields that user don't able to see.
   foreach (UserFieldAccessController::HIDDEN_ACCOUNT_FIELDS as $field) {
@@ -63,12 +68,17 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
 
   foreach (UserFieldAccessController::READ_ONLY_ACCOUNT_FIELDS as $field) {
     if (isset($form['account'][$field])) {
-      $form['account'][$field]['#access'] = TRUE;
+      if (!$edit_operation) {
+        $form['account'][$field]['#access'] = TRUE;
 
-      $form['account'][$field]['#attributes'] = [
-        'disabled' => 'disabled',
-        'readonly' => 'readonly',
-      ];
+        $form['account'][$field]['#attributes'] = [
+          'disabled' => 'disabled',
+          'readonly' => 'readonly',
+        ];
+      }
+      else {
+        $form['account'][$field]['#access'] = FALSE;
+      }
     }
   }
 
