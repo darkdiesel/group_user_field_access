@@ -5,7 +5,7 @@ namespace Drupal\group_user_field_access\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\field\FieldConfigInterface;
-use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
+use Drupal\group_user_field_access\Form\UserFieldAccessSettingsForm;
 
 /**
  * Helper controller.
@@ -65,7 +65,7 @@ class UserFieldAccessController extends ControllerBase {
 
     if ($groups) {
       // Get module settings for field access.
-      $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
+      $field_access_settings = UserFieldAccessSettingsForm::getSettings();
       $team_coordinator_group_roles = $field_access_settings->get('team_coordinator_group_roles');
 
       foreach ($groups as $grp) {
@@ -80,7 +80,7 @@ class UserFieldAccessController extends ControllerBase {
         if (isset($team_coordinator_group_roles[$group_type]) && $team_coordinator_group_roles[$group_type]) {
           $group_team_coordinator_role = $team_coordinator_group_roles[$group_type];
 
-          // Get group member and they roles.
+          // Get group member and their roles.
           $group_member = $group->getMember($teamCoordinator);
           $group_member_roles = $group_member->getRoles();
 

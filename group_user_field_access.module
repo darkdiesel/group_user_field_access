@@ -3,7 +3,7 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group_user_field_access\Controller\UserFieldAccessController;
-use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
+use Drupal\group_user_field_access\Form\UserFieldAccessSettingsForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -93,7 +93,7 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
   }
 
   // Get module settings for field access.
-  $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
+  $field_access_settings = UserFieldAccessSettingsForm::getSettings();
 
   $editable_fields = $field_access_settings->get('editable_user_fields');
 

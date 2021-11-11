@@ -1,7 +1,7 @@
 group_user_field_access.user_field_access_settings:
   path: '/admin/group/settings/user-field-access'
   defaults:
-    _form: '\Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom'
+    _form: '\Drupal\group_user_field_access\Form\UserFieldAccessSettingsForm'
     _title: 'User field access'
   requirements:
     _permission: 'administer group'

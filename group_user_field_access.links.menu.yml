@@ -1,0 +1,6 @@
+group_user_field_access.settings:
+  title: 'User field access'
+  description: 'User field access settings.'
+  route_name: 'group_user_field_access.user_field_access_settings'
+  parent: 'system.admin_group'
+  weight: 20
