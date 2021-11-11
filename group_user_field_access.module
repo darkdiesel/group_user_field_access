@@ -21,7 +21,7 @@ function group_user_field_access_user_access(AccountInterface $entity, $operatio
       break;
   }
 
-  return AccessResult::allowed();
+  return AccessResult::neutral();
 }
 
 /**
@@ -30,7 +30,7 @@ function group_user_field_access_user_access(AccountInterface $entity, $operatio
 function group_user_field_access_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $user = Drupal::currentUser();
 
-  if ($user->hasPermission('administer')) {
+  if ($user->hasPermission('administer users')) {
     return;
   }
 
