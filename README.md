@@ -1,4 +1,6 @@
-# Group user field access drupal 9 module
+# Group user field access 
+
+Drupal 8/9 module.
 
 ## Settings page
 A separated settings at Administration / Groups / Group Settings / User field access
@@ -32,10 +34,3 @@ unchecked for all; applicable for all group types
 - The components and fields with fixed behaviour (Username, Roles, Email, Password,
   Status, Picture, Language settings, Contact settings, Local settings, etc.) must be
   adjustable in the code as a constant.
-
-##Testing:
-
- - Test saving options on page /admin/group/settings/user-field-access
- - Testing with creating groups and sets to they team coordinator role.
- - Add users to group and test with team coordinator role edit allowed fields. Then Update settings and test again.
- - Test editing user with administartor role
