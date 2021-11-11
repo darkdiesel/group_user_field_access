@@ -3,7 +3,7 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group_user_field_access\Controller\UserFieldAccessController;
-use Drupal\group_user_field_access\Form\UserFieldAccessSettingsForm;
+use Drupal\group_user_field_access\Form\UserFieldAccessSettingsFrom;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -72,10 +72,8 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
       if (!$edit_operation) {
         $form['account'][$field]['#access'] = TRUE;
 
-        $form['account'][$field]['#attributes'] = [
-          'disabled' => 'disabled',
-          'readonly' => 'readonly',
-        ];
+        $form['account'][$field]['#attributes']['disabled'] = 'disabled';
+        $form['account'][$field]['#attributes']['readonly'] = 'readonly';
       }
       else {
         $form['account'][$field]['#access'] = FALSE;
@@ -85,15 +83,13 @@ function group_user_field_access_form_user_form_alter(&$form, FormStateInterface
 
   foreach (UserFieldAccessController::READ_ONLY_FIELDS as $field) {
     if (isset($form[$field])) {
-      $form['account']['#attributes'] = [
-        'disabled' => 'disabled',
-        'readonly' => 'readonly',
-      ];
+      $form[$field]['#attributes']['disabled'] = 'disabled';
+      $form[$field]['#attributes']['readonly'] = 'readonly';
     }
   }
 
   // Get module settings for field access.
-  $field_access_settings = UserFieldAccessSettingsForm::getSettings();
+  $field_access_settings = UserFieldAccessSettingsFrom::getSettings();
 
   $editable_fields = $field_access_settings->get('editable_user_fields');
 
